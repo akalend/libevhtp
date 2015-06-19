@@ -4355,6 +4355,7 @@ evhtp_make_request(evhtp_connection_t * c, evhtp_request_t * r,
 
     evhtp_headers_for_each(r->headers_out, _evhtp_create_headers, obuf);
     evbuffer_add_reference(obuf, "\r\n", 2, NULL, NULL);
+    evbuffer_add_buffer(obuf, r->buffer_out);
 
     return 0;
 }
