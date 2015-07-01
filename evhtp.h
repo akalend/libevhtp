@@ -1352,6 +1352,7 @@ EVHTP_EXPORT int evhtp_make_request(evhtp_connection_t * c,
 
 EVHTP_EXPORT unsigned int evhtp_request_status(evhtp_request_t *);
 
+
 EVHTP_EXPORT void
 _evhtp_connection_eventcb(evbev_t * bev, short events, void * arg);
 
