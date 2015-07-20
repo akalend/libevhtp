@@ -58,7 +58,7 @@ static int                  _evhtp_request_parser_headers_start(htparser * p);
 
 static void                 _evhtp_connection_readcb(evbev_t * bev, void * arg);
 
-// static evhtp_connection_t * _evhtp_connection_new(evhtp_t * htp, evutil_socket_t sock, evhtp_type type);
+static evhtp_connection_t * _evhtp_connection_new(evhtp_t * htp, evutil_socket_t sock, evhtp_type type);
 
 static evhtp_uri_t        * _evhtp_uri_new(void);
 static void                 _evhtp_uri_free(evhtp_uri_t * uri);
@@ -243,7 +243,7 @@ status_code_to_str(evhtp_res code) {
 /**
  * @brief callback definitions for request processing from libhtparse
  */
-htparse_hooks request_psets = {
+static htparse_hooks request_psets = {
     .on_msg_begin       = _evhtp_request_parser_start,
     .method             = NULL,
     .scheme             = NULL,
@@ -1913,7 +1913,7 @@ _evhtp_connection_writecb(evbev_t * bev, void * arg) {
     return;
 } /* _evhtp_connection_writecb */
 
-void
+static void
 _evhtp_connection_eventcb(evbev_t * bev, short events, void * arg) {
     evhtp_connection_t * c = arg;
 
@@ -2069,7 +2069,7 @@ _evhtp_default_request_cb(evhtp_request_t * request, void * arg) {
     evhtp_send_reply(request, EVHTP_RES_NOTFOUND);
 }
 
-evhtp_connection_t *
+static evhtp_connection_t *
 _evhtp_connection_new(evhtp_t * htp, evutil_socket_t sock, evhtp_type type) {
     evhtp_connection_t * connection;
     htp_type             ptype;
@@ -4204,6 +4204,11 @@ evhtp_free(evhtp_t * evhtp) {
         SSL_CTX_free(evhtp->ssl_ctx);
     }
 #endif
+
+    if (evhtp->server) { 
+        evhtp_safe_free(evhtp->server_name, evconnlistener_free);
+    }
+
 
     evhtp_safe_free(evhtp, free);
 } /* evhtp_free */
