@@ -4176,6 +4176,12 @@ evhtp_free(evhtp_t * evhtp) {
     }
 #endif
 
+#ifndef EVHTP_DISABLE_SSL
+    if (evhtp->ssl_ctx) {
+        SSL_CTX_free(evhtp->ssl_ctx);
+    }
+#endif
+
     if (evhtp->server_name) {
         evhtp_safe_free(evhtp->server_name, free);
     }
@@ -4195,14 +4201,14 @@ evhtp_free(evhtp_t * evhtp) {
 
 #ifndef EVHTP_DISABLE_SSL
     if (evhtp->ssl_ctx) {
-        SSL_CTX_free(evhtp->ssl_ctx);
-        evhtp->ssl_ctx = NULL;
+        evhtp_safe_free(evhtp->ssl_ctx, SSL_CTX_free);
     }
 #endif
 
     if (evhtp->server) { 
         evhtp_safe_free(evhtp->server, evconnlistener_free);
     }
+
 
     evhtp_safe_free(evhtp, free);
 } /* evhtp_free */
